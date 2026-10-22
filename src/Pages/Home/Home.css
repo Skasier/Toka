@@ -1,0 +1,281 @@
+.home {
+  background: #111111;
+  color: white;
+}
+
+.hero {
+  min-height: calc(100vh - 80px);
+
+  background-image: url("../../assets/gym.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-overlay {
+  min-height: calc(100vh - 80px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.55);
+
+  text-align: center;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-small {
+  margin: 0 0 15px;
+
+  color: #989898;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 4px;
+}
+
+.hero h1 {
+  margin: 0;
+
+  /* font-size: clamp(50px, 10vw, 140px); */
+  font-weight: 700;
+  letter-spacing: 8px;
+  color: white;
+}
+
+.services h2 {
+  margin: 0;
+
+  font-weight: 700;
+  letter-spacing: 8px;
+  color: white;
+}
+
+.hero-text {
+  margin: 20px 0 35px;
+
+  font-size: 15px;
+  letter-spacing: 5px;
+}
+
+.hero-button {
+  padding: 15px 32px;
+
+  background: #ff5a1f;
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  transition: 0.25s ease;
+}
+
+.hero-button:hover {
+  background: white;
+  color: #111111;
+}
+
+.intro {
+  padding: 130px 10%;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+
+  background: #989898;
+  color: #111111;
+}
+
+.intro-title p,
+.section-heading p,
+.membership p {
+  margin: 0 0 20px;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.intro-title h2 {
+  margin: 0;
+
+  font-size: clamp(50px, 6vw, 90px);
+  line-height: 0.95;
+}
+
+.intro-text {
+  align-self: end;
+}
+
+.intro-text p {
+  max-width: 500px;
+
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.intro-text a {
+  display: inline-block;
+
+  margin-top: 20px;
+
+  color: #111111;
+
+  text-decoration: none;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  border-bottom: 1px solid #111111;
+
+  padding-bottom: 8px;
+}
+
+.services {
+  padding: 130px 6%;
+}
+
+.services p {
+  margin: 0;
+
+  font-weight: 700;
+  color: white;
+}
+
+.section-heading {
+  margin-bottom: 60px;
+}
+
+.section-heading h2 {
+  margin: 0;
+
+  font-size: clamp(45px, 7vw, 100px);
+  line-height: 0.9;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.service-card {
+  background: #181818;
+}
+
+.service-image {
+  height: 400px;
+
+  background-size: cover;
+  background-position: center;
+}
+
+.gym-image {
+  background-image: url("../../assets/gym.jpg");
+}
+
+.classes-image {
+  background-image: url("../../assets/classes.jpg");
+}
+
+.personal-image {
+  background-image: url("../../assets/personal-training.jpg");
+}
+
+.service-content {
+  padding: 25px;
+}
+
+.service-content span {
+  color: #989898;
+
+  font-size: 11px;
+}
+
+.service-content h3 {
+  margin: 10px 0;
+
+  font-size: 24px;
+}
+
+.service-content p {
+  color: #989898;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.membership {
+  min-height: 650px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  background: #181818;
+}
+
+.membership h2 {
+  margin: 0 0 40px;
+
+  font-size: clamp(55px, 8vw, 120px);
+  line-height: 0.9;
+}
+
+.membership a {
+  padding: 16px 35px;
+
+  background: #ff5a1f;
+  color: white;
+
+  text-decoration: none;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+
+  transition: 0.25s ease;
+}
+
+.membership a:hover {
+  background: white;
+  color: #111111;
+}
+
+@media (max-width: 800px) {
+  .intro {
+    grid-template-columns: 1fr;
+    gap: 50px;
+
+    padding: 90px 25px;
+  }
+
+  .services {
+    padding: 90px 25px;
+  }
+
+  .service-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .service-image {
+    height: 300px;
+  }
+
+  .membership {
+    min-height: 500px;
+    padding: 40px 25px;
+  }
+}
