@@ -1,21 +1,24 @@
 
 import { useEffect, useState } from "react";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
-  updateProfile,
-} from "firebase/auth";
-import {
-  doc,
-  setDoc,
-  getDoc,
-  serverTimestamp,
-} from "firebase/firestore";
-
-import { auth, db } from "../../../firebase";
 import "./Join.css";
+
+async function authRequest(path, options = {}) {
+  const response = await fetch(path, {
+    method: options.method || "GET",
+    credentials: "include",
+    headers: options.body ? { "Content-Type": "application/json" } : undefined,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const result = await response.json();
+
+  if (!response.ok) {
+    const error = new Error(result.message || "The request failed.");
+    error.status = response.status;
+    throw error;
+  }
+
+  return result;
+}
 
 export default function Join() {
   const [mode, setMode] = useState("signup");
@@ -31,31 +34,22 @@ export default function Join() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      setUser(currentUser);
-      setMember(null);
-      setError("");
-
+    async function loadAccount() {
       try {
-        if (currentUser) {
-          const memberRef = doc(db, "members", currentUser.uid);
-          const memberSnapshot = await getDoc(memberRef);
-
-          if (memberSnapshot.exists()) {
-            setMember(memberSnapshot.data());
-          }
-        }
+        const result = await authRequest("/api/auth/me");
+        setUser(result.user);
+        setMember(result.user);
       } catch (err) {
-        console.error("Could not load member profile:", err);
-        setError(
-          "Your account is signed in, but your member profile could not be loaded."
-        );
+        if (err.status !== 401) {
+          console.error("Could not load member profile:", err);
+          setError(err.message);
+        }
       } finally {
         setChecking(false);
       }
-    });
+    }
 
-    return unsubscribe;
+    loadAccount();
   }, []);
 
   async function handleSignup(event) {
@@ -64,7 +58,8 @@ export default function Join() {
     setLoading(true);
 
     try {
-      if (!fullName.trim()) {
+      const cleanFullName = fullName.trim();
+      if (!cleanFullName) {
         throw new Error("Please enter your full name.");
       }
 
@@ -72,38 +67,21 @@ export default function Join() {
         throw new Error("Your password must be at least 8 characters.");
       }
 
-      const cleanEmail = email.trim().toLowerCase();
-
-      const credential = await createUserWithEmailAndPassword(
-        auth,
-        cleanEmail,
-        password
-      );
-
-      await updateProfile(credential.user, {
-        displayName: fullName.trim(),
+      const result = await authRequest("/api/auth/signup", {
+        method: "POST",
+        body: {
+          fullName: cleanFullName,
+          email: email.trim().toLowerCase(),
+          password,
+          membership,
+        },
       });
 
-      const memberData = {
-        uid: credential.user.uid,
-        fullName: fullName.trim(),
-        email: cleanEmail,
-        membership,
-        createdAt: serverTimestamp(),
-      };
-
-      await setDoc(
-        doc(db, "members", credential.user.uid),
-        memberData
-      );
-
-      setMember({
-        ...memberData,
-        createdAt: new Date(),
-      });
+      setUser(result.user);
+      setMember(result.user);
     } catch (err) {
       console.error("Signup failed:", err);
-      setError(getFriendlyError(err));
+      setError(err.message || "Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -115,27 +93,16 @@ export default function Join() {
     setLoading(true);
 
     try {
-      const credential = await signInWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
-      );
+      const result = await authRequest("/api/auth/login", {
+        method: "POST",
+        body: { email: email.trim().toLowerCase(), password },
+      });
 
-      const memberRef = doc(db, "members", credential.user.uid);
-      const memberSnapshot = await getDoc(memberRef);
-
-      if (memberSnapshot.exists()) {
-        setMember(memberSnapshot.data());
-      } else {
-        setMember({
-          fullName: credential.user.displayName || "Member",
-          email: credential.user.email,
-          membership: "No membership saved",
-        });
-      }
+      setUser(result.user);
+      setMember(result.user);
     } catch (err) {
       console.error("Login failed:", err);
-      setError(getFriendlyError(err));
+      setError(err.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -145,7 +112,8 @@ export default function Join() {
     setError("");
 
     try {
-      await signOut(auth);
+      await authRequest("/api/auth/logout", { method: "POST" });
+      setUser(null);
       setMember(null);
       setEmail("");
       setPassword("");
@@ -153,29 +121,8 @@ export default function Join() {
       setMode("login");
     } catch (err) {
       console.error("Logout failed:", err);
-      setError(getFriendlyError(err));
+      setError(err.message || "Logout failed. Please try again.");
     }
-  }
-
-  function getFriendlyError(err) {
-    const messages = {
-      "auth/email-already-in-use":
-        "This email already has an account.",
-      "auth/invalid-email":
-        "Please enter a valid email address.",
-      "auth/invalid-credential":
-        "Incorrect email or password.",
-      "auth/weak-password":
-        "Choose a stronger password.",
-      "auth/network-request-failed":
-        "Check your internet connection.",
-      "auth/too-many-requests":
-        "Too many attempts. Please try again later.",
-      "permission-denied":
-        "Database access denied. Check your Firestore security rules.",
-    };
-
-    return messages[err.code] || err.message || "Something went wrong.";
   }
 
   return (
@@ -238,7 +185,7 @@ export default function Join() {
               <div className="tk-field">
                 <label>Full name</label>
                 <p>
-                  {member?.fullName || user.displayName || "Member"}
+                  {member?.fullName || user.fullName || "Member"}
                 </p>
               </div>
 

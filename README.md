@@ -1,16 +1,25 @@
-# React + Vite
+# Toka Fitness
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## Authentication and MongoDB setup
 
-Currently, two official plugins are available:
+Signup and login are handled by the Express API in `server/index.js`. Member
+documents are stored in MongoDB; passwords are hashed before storage, and the
+selected `Core` or `Plus` membership is saved with the account. The API uses an
+HTTP-only session cookie rather than exposing a database connection string or
+session token to the browser.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Create a MongoDB Atlas cluster, a database user, and allow your development
+   machine's IP address in Atlas Network Access.
+2. Copy `.env.example` to `.env`. Set `MONGODB_URI` to your Atlas connection
+   string (URL-encode special characters in the database username/password) and
+   set `JWT_SECRET` to a long, random value of at least 32 characters.
+3. Start the API with `npm run api`.
+4. In a second terminal, start the React app with `npm run dev`.
 
-## React Compiler
+Vite forwards `/api` requests to the local API on port 5000. In production,
+deploy the API and frontend behind the same origin, or configure an equivalent
+same-site reverse proxy before using the session cookie.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+Keep `.env` private. If it is already tracked by Git, remove it from tracking
+with `git rm --cached .env` (the local file remains) and rotate any secrets it
+contains.
