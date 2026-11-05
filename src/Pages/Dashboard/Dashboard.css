@@ -1,0 +1,291 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800&display=swap");
+
+.tkd-root {
+  --tk-ink: #111111;
+  --tk-orange: #ff5a1f;
+  --tk-orange-hover: #ff7847;
+  --tk-orange-tint: #fff0e9;
+  --tk-paper: #ffffff;
+  --tk-mist: #f2f2f2;
+  --tk-line: #d0d0d0;
+  --tk-muted: #666666;
+  --tk-error: #b3122d;
+  --tk-good: #176536;
+  --tk-display: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
+  --tk-body: Barlow, "Segoe UI", system-ui, -apple-system, sans-serif;
+
+  min-height: calc(100vh - 80px);
+  background: var(--tk-mist);
+  color: var(--tk-ink);
+  font-family: var(--tk-body);
+  font-size: 17px;
+  line-height: 1.45;
+  /* index.css centres everything inside #root; the dashboard reads left-aligned */
+  text-align: left;
+  letter-spacing: normal;
+}
+.tkd-root *,
+.tkd-root *::before,
+.tkd-root *::after {
+  box-sizing: border-box;
+}
+/* index.css sets h1/h2 colour, size and margins globally, so override them here */
+.tkd-root h1,
+.tkd-root h2,
+.tkd-root h3 {
+  margin: 0;
+  color: var(--tk-ink);
+  font-family: var(--tk-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: normal;
+}
+.tkd-root p {
+  margin: 0;
+}
+
+.tkd-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 48px) clamp(16px, 4vw, 48px) 64px;
+}
+
+/* page heading + view toggle */
+.tkd-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.tkd-root h1.tkd-title {
+  font-size: clamp(40px, 6vw, 64px);
+  line-height: 0.95;
+}
+.tkd-lede {
+  margin-top: 8px;
+  color: var(--tk-muted);
+}
+.tkd-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--tk-paper);
+  border: 2px solid var(--tk-ink);
+  border-radius: 8px;
+}
+.tkd-toggle button {
+  height: 40px;
+  padding: 0 20px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--tk-ink);
+  background: transparent;
+  border: 0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.tkd-toggle button:hover {
+  background: var(--tk-mist);
+}
+.tkd-toggle button[aria-pressed="true"] {
+  background: var(--tk-orange);
+}
+.tkd-root button:focus-visible,
+.tkd-root input:focus-visible {
+  outline: 3px solid var(--tk-ink);
+  outline-offset: 2px;
+}
+
+/* grid + cards */
+.tkd-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.s8 { grid-column: span 8; }
+.s7 { grid-column: span 7; }
+.s5 { grid-column: span 5; }
+.s4 { grid-column: span 4; }
+@media (max-width: 800px) {
+  .s8, .s7, .s5, .s4 { grid-column: span 12; }
+}
+.tkd-card {
+  background: var(--tk-paper);
+  border-radius: 10px;
+  padding: clamp(18px, 3vw, 28px);
+  box-shadow: 0 1px 0 var(--tk-line);
+}
+.tkd-root .tkd-card h2 {
+  margin-bottom: 16px;
+  font-size: 28px;
+  line-height: 1.05;
+}
+
+/* member: week strip */
+.tkd-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.tkd-day {
+  padding: 16px 0;
+  text-align: center;
+  font-weight: 600;
+  color: var(--tk-muted);
+  background: var(--tk-paper);
+  border: 2px solid var(--tk-line);
+  border-radius: 6px;
+}
+.tkd-day.on {
+  background: var(--tk-orange);
+  border-color: var(--tk-orange);
+  color: var(--tk-ink);
+}
+.tkd-note {
+  margin-top: 14px;
+  color: var(--tk-muted);
+}
+.tkd-root .tkd-big {
+  font-size: clamp(48px, 6vw, 64px);
+  line-height: 0.95;
+}
+.tkd-root .tkd-plan {
+  color: var(--tk-orange);
+}
+.tkd-small {
+  font-size: 15px;
+  color: var(--tk-muted);
+}
+
+/* lists */
+.tkd-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tkd-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--tk-line);
+}
+.tkd-list li:first-child {
+  border-top: 2px solid var(--tk-ink);
+}
+.tkd-list strong {
+  font-weight: 600;
+}
+.tkd-empty {
+  color: var(--tk-muted);
+}
+.tkd-btn {
+  height: 40px;
+  padding: 0 16px;
+  font: inherit;
+  font-weight: 600;
+  color: var(--tk-ink);
+  background: transparent;
+  border: 2px solid var(--tk-ink);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.tkd-btn:hover {
+  background: var(--tk-ink);
+  color: #fff;
+}
+
+/* staff */
+.tkd-stat .tkd-big {
+  margin-bottom: 6px;
+}
+.tkd-stat.alert {
+  border-left: 4px solid var(--tk-error);
+}
+.tkd-search {
+  width: 100%;
+  height: 52px;
+  padding: 0 14px;
+  margin-bottom: 16px;
+  font: inherit;
+  color: var(--tk-ink);
+  background: var(--tk-paper);
+  border: 2px solid var(--tk-line);
+  border-radius: 6px;
+}
+.tkd-search:hover {
+  border-color: var(--tk-ink);
+}
+.tkd-scroll {
+  overflow-x: auto;
+}
+.tkd-root table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+}
+.tkd-root thead {
+  border-top: 2px solid var(--tk-ink);
+}
+.tkd-root th {
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--tk-muted);
+  border-bottom: 1px solid var(--tk-line);
+}
+.tkd-root td {
+  padding: 14px 10px;
+  border-bottom: 1px solid var(--tk-line);
+}
+.tkd-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 4px;
+  background: #eaf7ee;
+  color: var(--tk-good);
+}
+.tkd-tag.Frozen {
+  background: var(--tk-mist);
+  color: var(--tk-ink);
+}
+.tkd-tag.Overdue {
+  background: #fff0f0;
+  color: var(--tk-error);
+}
+.tkd-list li.tkd-classrow {
+  display: block;
+}
+.tkd-classtop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.tkd-bar-track {
+  height: 10px;
+  margin-top: 10px;
+  background: var(--tk-mist);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.tkd-bar-track i {
+  display: block;
+  height: 100%;
+  background: var(--tk-orange);
+}
+.tkd-bar-track i.full {
+  background: var(--tk-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tkd-root * {
+    transition: none !important;
+  }
+}

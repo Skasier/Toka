@@ -6,6 +6,7 @@ import Home from "./Pages/Home/Home";
 import About from "./Pages/About/About";
 import Join from "./Pages/Join/Join";
 import Membership from './Pages/Membership/Membership'
+import Dashboard from "./Pages/Dashboard/Dashboard";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/join" element={<Join />} />
           <Route path="/membership" element={<Membership/>} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </div>
 
