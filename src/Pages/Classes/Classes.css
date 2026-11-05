@@ -1,0 +1,319 @@
+.classes-page {
+  background: #111111;
+  color: #f7f7f7;
+  min-height: calc(100vh - 120px);
+  text-align: left;
+}
+
+.classes-hero {
+  display: grid;
+  grid-template-columns: 1.5fr 0.9fr;
+  gap: 2rem;
+  padding: 5rem 6% 2.5rem;
+  background: linear-gradient(135deg, rgba(255, 90, 31, 0.15), rgba(17, 17, 17, 0.7));
+}
+
+.classes-hero-copy {
+  max-width: 700px;
+}
+
+.classes-eyebrow,
+.classes-filters-label {
+  margin: 0 0 1rem;
+  color: #ffb08c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.28rem;
+  text-transform: uppercase;
+}
+
+.classes-hero h1 {
+  margin: 0;
+  color: #f7f7f7;
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: 0.92;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.classes-hero p {
+  max-width: 600px;
+  margin: 1.3rem 0 2rem;
+  color: #d2d2d2;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.classes-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.classes-primary-btn,
+.classes-secondary-btn,
+.class-book-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0.9rem 1.6rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.classes-primary-btn,
+.class-book-btn {
+  background: #ff5a1f;
+  color: white;
+  box-shadow: 0 18px 34px rgba(255, 90, 31, 0.24);
+}
+
+.classes-secondary-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.classes-primary-btn:hover,
+.classes-secondary-btn:hover,
+.class-book-btn:hover {
+  transform: translateY(-1px);
+}
+
+.classes-hero-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.classes-stat-card,
+.classes-day-card {
+  background: rgba(24, 24, 24, 0.94);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 1.5rem;
+}
+
+.classes-stat-card p,
+.classes-day-card p {
+  margin: 0;
+  color: #d2d2d2;
+  line-height: 1.6;
+}
+
+.classes-stat-value {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #ffffff;
+  font-size: 2.4rem;
+  font-weight: 800;
+}
+
+.classes-content {
+  padding: 2rem 6% 5rem;
+}
+
+.classes-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.classes-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.classes-filter {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #1a1a1a;
+  color: #e9e9e9;
+  padding: 0.8rem 1.25rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.classes-filter.active {
+  background: #ff5a1f;
+  border-color: #ff5a1f;
+  color: #fff;
+}
+
+.classes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.class-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 360px;
+  background: linear-gradient(180deg, #1a1a1a 0%, #141414 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.class-card-visual {
+  height: 170px;
+  background: linear-gradient(135deg, rgba(255, 90, 31, 0.9), rgba(255, 160, 123, 0.3));
+  display: flex;
+  align-items: flex-end;
+  padding: 1.1rem;
+}
+
+.class-card-badge {
+  display: inline-flex;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(17, 17, 17, 0.8);
+  color: #ffeadf;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+}
+
+.class-card-body {
+  padding: 1.4rem 1.3rem 1.2rem;
+}
+
+.class-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.class-card h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.class-level {
+  display: inline-flex;
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(255, 90, 31, 0.12);
+  color: #ffb08c;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+}
+
+.class-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem 1rem;
+  margin: 1rem 0 1.3rem;
+  color: #d8d8d8;
+  font-size: 0.9rem;
+}
+
+.class-meta strong {
+  display: block;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.class-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.class-availability {
+  color: #b4b4b4;
+  font-size: 0.72rem;
+  letter-spacing: 0.08rem;
+  text-transform: uppercase;
+}
+
+.class-availability strong {
+  color: #ffffff;
+}
+
+.class-book-btn {
+  min-height: 42px;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+}
+
+.class-book-btn.booked {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f3f3f3;
+  box-shadow: none;
+}
+
+.class-book-btn:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+.classes-feedback {
+  margin: 0 0 1.25rem;
+  color: #c9f3d4;
+  font-size: 0.95rem;
+}
+
+.classes-feedback.error {
+  color: #ff9a9a;
+}
+
+@media (max-width: 980px) {
+  .classes-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .classes-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .classes-hero {
+    padding-top: 3.5rem;
+  }
+
+  .classes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .classes-toolbar {
+    align-items: flex-start;
+  }
+
+  .classes-primary-btn,
+  .classes-secondary-btn {
+    width: 100%;
+  }
+
+  .class-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

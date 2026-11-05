@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import "./Join.css";
 
 async function authRequest(path, options = {}) {
@@ -21,6 +22,9 @@ async function authRequest(path, options = {}) {
 }
 
 export default function Join() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get("next");
   const [mode, setMode] = useState("signup");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -33,12 +37,22 @@ export default function Join() {
   const [checking, setChecking] = useState(true);
   const [error, setError] = useState("");
 
+  function continueAfterAuth() {
+    const destination = ["/dashboard", "/classes"].includes(returnTo)
+      ? returnTo
+      : "/dashboard";
+    navigate(destination, { replace: true });
+  }
+
   useEffect(() => {
     async function loadAccount() {
       try {
         const result = await authRequest("/api/auth/me");
         setUser(result.user);
         setMember(result.user);
+        if (["/dashboard", "/classes"].includes(returnTo)) {
+          navigate(returnTo, { replace: true });
+        }
       } catch (err) {
         if (err.status !== 401) {
           console.error("Could not load member profile:", err);
@@ -50,7 +64,7 @@ export default function Join() {
     }
 
     loadAccount();
-  }, []);
+  }, [navigate, returnTo]);
 
   async function handleSignup(event) {
     event.preventDefault();
@@ -79,6 +93,7 @@ export default function Join() {
 
       setUser(result.user);
       setMember(result.user);
+      continueAfterAuth();
     } catch (err) {
       console.error("Signup failed:", err);
       setError(err.message || "Signup failed. Please try again.");
@@ -100,6 +115,7 @@ export default function Join() {
 
       setUser(result.user);
       setMember(result.user);
+      continueAfterAuth();
     } catch (err) {
       console.error("Login failed:", err);
       setError(err.message || "Login failed. Please try again.");
@@ -198,6 +214,13 @@ export default function Join() {
                 <label>Membership plan</label>
                 <p>{member?.membership || "No membership saved"}</p>
               </div>
+
+              <Link className="tk-button" to="/dashboard">
+                View dashboard <span aria-hidden="true">→</span>
+              </Link>
+              <Link className="tk-terms" to="/classes">
+                Browse classes
+              </Link>
 
               {error && (
                 <p className="tk-form-error" role="alert">

@@ -445,3 +445,17 @@
 .tk-signed-in .tk-button {
   margin-top: 8px;
 }
+
+.tk-signed-in a.tk-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+}
+
+.tk-signed-in a.tk-terms {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--tk-ink);
+  font-weight: 600;
+}

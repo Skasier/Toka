@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import express from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import { CLASS_SCHEDULE } from "../shared/classes.js";
 
 // ------------------------------------
 // Configuration
@@ -78,6 +79,26 @@ const userSchema = new mongoose.Schema(
 );
 
 const User = mongoose.model("User", userSchema);
+
+const bookingSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    classId: {
+      type: String,
+      required: true,
+      enum: CLASS_SCHEDULE.map((item) => item.id),
+    },
+  },
+  { timestamps: true }
+);
+
+bookingSchema.index({ userId: 1, classId: 1 }, { unique: true });
+
+const Booking = mongoose.model("Booking", bookingSchema);
 
 // ------------------------------------
 // Express App
@@ -330,10 +351,93 @@ app.get("/api/auth/me", requireAuth, (request, response) => {
 // MEMBER DASHBOARD
 // ------------------------------------
 
-app.get("/api/dashboard", requireAuth, (request, response) => {
-  return response.json({
-    user: publicUser(request.user),
-  });
+app.get("/api/dashboard", requireAuth, async (request, response, next) => {
+  try {
+    const bookings = await Booking.find({ userId: request.user._id })
+      .sort({ createdAt: 1 })
+      .lean();
+
+    return response.json({
+      user: publicUser(request.user),
+      bookings: bookings.map((booking) => ({
+        ...CLASS_SCHEDULE.find((item) => item.id === booking.classId),
+        bookingId: booking._id.toString(),
+      })),
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+// ------------------------------------
+// MEMBER CLASS BOOKINGS
+// ------------------------------------
+
+app.get("/api/bookings", requireAuth, async (request, response, next) => {
+  try {
+    const bookings = await Booking.find({ userId: request.user._id })
+      .sort({ createdAt: 1 })
+      .lean();
+
+    return response.json({
+      bookings: bookings.map((booking) => ({
+        ...CLASS_SCHEDULE.find((item) => item.id === booking.classId),
+        bookingId: booking._id.toString(),
+      })),
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post("/api/bookings", requireAuth, async (request, response, next) => {
+  try {
+    const { classId } = request.body || {};
+    const classInfo = CLASS_SCHEDULE.find((item) => item.id === classId);
+
+    if (!classInfo) {
+      return response.status(400).json({ message: "Choose a valid class." });
+    }
+
+    const booking = await Booking.create({
+      userId: request.user._id,
+      classId,
+    });
+
+    return response.status(201).json({
+      booking: {
+        ...classInfo,
+        bookingId: booking._id.toString(),
+      },
+    });
+  } catch (error) {
+    if (error.code === 11000) {
+      return response.status(409).json({
+        message: "You already have a place in this class.",
+      });
+    }
+
+    return next(error);
+  }
+});
+
+app.delete("/api/bookings/:classId", requireAuth, async (request, response, next) => {
+  try {
+    const booking = await Booking.findOneAndDelete({
+      userId: request.user._id,
+      classId: request.params.classId,
+    });
+
+    if (!booking) {
+      return response.status(404).json({
+        message: "That booking was not found on your account.",
+      });
+    }
+
+    return response.json({ message: "Class booking cancelled." });
+  } catch (error) {
+    return next(error);
+  }
 });
 
 // ------------------------------------

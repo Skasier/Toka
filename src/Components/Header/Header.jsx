@@ -47,6 +47,10 @@ function Header() {
             MEMBERSHIP
           </Link>
           <br />
+          <Link to="/dashboard" onClick={closeMenu}>
+            MEMBER DASHBOARD
+          </Link>
+          <br />
           <Link to="/classes" onClick={closeMenu}>
             CLASSES
           </Link>
