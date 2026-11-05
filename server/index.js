@@ -100,6 +100,41 @@ bookingSchema.index({ userId: 1, classId: 1 }, { unique: true });
 
 const Booking = mongoose.model("Booking", bookingSchema);
 
+const mealPlanSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    day: {
+      type: String,
+      enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      required: true,
+    },
+    mealType: {
+      type: String,
+      enum: ["Breakfast", "Lunch", "Dinner", "Snack"],
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 100,
+    },
+    details: {
+      type: String,
+      trim: true,
+      maxlength: 1000,
+      default: "",
+    },
+  },
+  { timestamps: true }
+);
+
+const MealPlan = mongoose.model("MealPlan", mealPlanSchema);
+
 // ------------------------------------
 // Express App
 // ------------------------------------
@@ -353,9 +388,12 @@ app.get("/api/auth/me", requireAuth, (request, response) => {
 
 app.get("/api/dashboard", requireAuth, async (request, response, next) => {
   try {
-    const bookings = await Booking.find({ userId: request.user._id })
-      .sort({ createdAt: 1 })
-      .lean();
+    const [bookings, meals] = await Promise.all([
+      Booking.find({ userId: request.user._id }).sort({ createdAt: 1 }).lean(),
+      MealPlan.find({ userId: request.user._id })
+        .sort({ day: 1, mealType: 1, createdAt: 1 })
+        .lean(),
+    ]);
 
     return response.json({
       user: publicUser(request.user),
@@ -363,7 +401,83 @@ app.get("/api/dashboard", requireAuth, async (request, response, next) => {
         ...CLASS_SCHEDULE.find((item) => item.id === booking.classId),
         bookingId: booking._id.toString(),
       })),
+      meals: meals.map((meal) => ({
+        id: meal._id.toString(),
+        day: meal.day,
+        mealType: meal.mealType,
+        name: meal.name,
+        details: meal.details,
+      })),
     });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+// ------------------------------------
+// MEMBER MEAL PLAN
+// ------------------------------------
+
+app.post("/api/meals", requireAuth, async (request, response, next) => {
+  try {
+    const { day, mealType, name, details = "" } = request.body || {};
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const mealTypes = ["Breakfast", "Lunch", "Dinner", "Snack"];
+
+    if (
+      !days.includes(day) ||
+      !mealTypes.includes(mealType) ||
+      typeof name !== "string" ||
+      !name.trim() ||
+      name.trim().length > 100 ||
+      typeof details !== "string" ||
+      details.length > 1000
+    ) {
+      return response.status(400).json({
+        message: "Enter a valid day, meal type, meal name, and notes (up to 1,000 characters).",
+      });
+    }
+
+    const meal = await MealPlan.create({
+      userId: request.user._id,
+      day,
+      mealType,
+      name: name.trim(),
+      details: details.trim(),
+    });
+
+    return response.status(201).json({
+      meal: {
+        id: meal._id.toString(),
+        day: meal.day,
+        mealType: meal.mealType,
+        name: meal.name,
+        details: meal.details,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.delete("/api/meals/:mealId", requireAuth, async (request, response, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(request.params.mealId)) {
+      return response.status(400).json({ message: "Choose a valid meal plan entry." });
+    }
+
+    const meal = await MealPlan.findOneAndDelete({
+      _id: request.params.mealId,
+      userId: request.user._id,
+    });
+
+    if (!meal) {
+      return response.status(404).json({
+        message: "That meal plan entry was not found on your account.",
+      });
+    }
+
+    return response.json({ message: "Meal plan entry deleted." });
   } catch (error) {
     return next(error);
   }

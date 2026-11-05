@@ -17,9 +17,20 @@ function Dashboard() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [bookings, setBookings] = useState([]);
+  const [meals, setMeals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pendingBooking, setPendingBooking] = useState("");
+  const [pendingMeal, setPendingMeal] = useState("");
+  const [savingMeal, setSavingMeal] = useState(false);
   const [error, setError] = useState("");
+  const [mealError, setMealError] = useState("");
+  const [mealMessage, setMealMessage] = useState("");
+  const [mealForm, setMealForm] = useState({
+    day: "Monday",
+    mealType: "Breakfast",
+    name: "",
+    details: "",
+  });
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
@@ -39,12 +50,13 @@ function Dashboard() {
         if (!response.ok) {
           throw new Error(result.message || "Could not load your dashboard.");
         }
-        if (!result.user || !Array.isArray(result.bookings)) {
+        if (!result.user || !Array.isArray(result.bookings) || !Array.isArray(result.meals)) {
           throw new Error("The API is out of date. Restart it with npm run api, then refresh this page.");
         }
 
         setUser(result.user);
         setBookings(result.bookings);
+        setMeals(result.meals);
       })
       .catch((requestError) => {
         if (!active) return;
@@ -85,6 +97,73 @@ function Dashboard() {
       setError(requestError.message || "Could not cancel this booking.");
     } finally {
       setPendingBooking("");
+    }
+  }
+
+  async function addMeal(event) {
+    event.preventDefault();
+    setSavingMeal(true);
+    setMealError("");
+    setMealMessage("");
+
+    try {
+      const response = await fetch("/api/meals", {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mealForm),
+      });
+      const result = await readApiResponse(response);
+
+      if (response.status === 401) {
+        navigate("/join?next=%2Fdashboard", { replace: true });
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(result.message || "Could not save this meal.");
+      }
+      if (!result.meal) {
+        throw new Error("The API returned an unexpected meal response. Restart it with npm run api.");
+      }
+
+      setMeals((current) => [...current, result.meal]);
+      setMealForm((current) => ({ ...current, name: "", details: "" }));
+      setMealMessage("Meal added to your plan.");
+    } catch (requestError) {
+      console.error("Could not save meal plan entry:", requestError);
+      setMealError(requestError.message || "Could not save this meal.");
+    } finally {
+      setSavingMeal(false);
+    }
+  }
+
+  async function deleteMeal(meal) {
+    setPendingMeal(meal.id);
+    setMealError("");
+    setMealMessage("");
+
+    try {
+      const response = await fetch(`/api/meals/${meal.id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const result = await readApiResponse(response);
+
+      if (response.status === 401) {
+        navigate("/join?next=%2Fdashboard", { replace: true });
+        return;
+      }
+      if (!response.ok) {
+        throw new Error(result.message || "Could not remove this meal.");
+      }
+
+      setMeals((current) => current.filter((item) => item.id !== meal.id));
+      setMealMessage("Meal removed from your plan.");
+    } catch (requestError) {
+      console.error("Could not delete meal plan entry:", requestError);
+      setMealError(requestError.message || "Could not remove this meal.");
+    } finally {
+      setPendingMeal("");
     }
   }
 
@@ -188,6 +267,94 @@ function Dashboard() {
                       aria-label={`Cancel ${booking.name} booking`}
                     >
                       {pendingBooking === booking.id ? "Cancelling…" : "Cancel"}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section className="tkd-card s12 tkd-meal-plan" aria-labelledby="meal-plan-heading">
+            <div className="tkd-meal-heading">
+              <div>
+                <h2 id="meal-plan-heading">Your meal plan</h2>
+                <p className="tkd-small">Build a weekly plan that works for you. Your entries are private to your account.</p>
+              </div>
+            </div>
+
+            {mealError && <p className="tkd-error" role="alert">{mealError}</p>}
+            {mealMessage && <p className="tkd-success" role="status">{mealMessage}</p>}
+
+            <form className="tkd-meal-form" onSubmit={addMeal}>
+              <div className="tkd-meal-form-row">
+                <label>
+                  Day
+                  <select
+                    value={mealForm.day}
+                    onChange={(event) => setMealForm((current) => ({ ...current, day: event.target.value }))}
+                  >
+                    {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                      <option key={day} value={day}>{day}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  Meal
+                  <select
+                    value={mealForm.mealType}
+                    onChange={(event) => setMealForm((current) => ({ ...current, mealType: event.target.value }))}
+                  >
+                    {["Breakfast", "Lunch", "Dinner", "Snack"].map((mealType) => (
+                      <option key={mealType} value={mealType}>{mealType}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="tkd-meal-name">
+                  Meal name
+                  <input
+                    type="text"
+                    maxLength={100}
+                    placeholder="e.g. Overnight oats"
+                    value={mealForm.name}
+                    onChange={(event) => setMealForm((current) => ({ ...current, name: event.target.value }))}
+                    required
+                  />
+                </label>
+              </div>
+              <label>
+                Ingredients or notes <span className="tkd-optional">(optional)</span>
+                <textarea
+                  maxLength={1000}
+                  rows={3}
+                  placeholder="Add ingredients, portions, or prep notes"
+                  value={mealForm.details}
+                  onChange={(event) => setMealForm((current) => ({ ...current, details: event.target.value }))}
+                />
+              </label>
+              <button className="tkd-meal-submit" type="submit" disabled={savingMeal}>
+                {savingMeal ? "Saving…" : "Add to meal plan"}
+              </button>
+            </form>
+
+            {meals.length === 0 ? (
+              <p className="tkd-empty tkd-meal-empty">No meals in your plan yet. Add your first meal above.</p>
+            ) : (
+              <ul className="tkd-list tkd-meal-list">
+                {meals.map((meal) => (
+                  <li key={meal.id}>
+                    <div className="tkd-meal-info">
+                      <span className="tkd-meal-tag">{meal.day} · {meal.mealType}</span>
+                      <strong>{meal.name}</strong>
+                      {meal.details && <p className="tkd-small">{meal.details}</p>}
+                    </div>
+                    <button
+                      className="tkd-btn"
+                      type="button"
+                      disabled={pendingMeal === meal.id}
+                      onClick={() => deleteMeal(meal)}
+                      aria-label={`Remove ${meal.name} from meal plan`}
+                    >
+                      {pendingMeal === meal.id ? "Removing…" : "Remove"}
                     </button>
                   </li>
                 ))}

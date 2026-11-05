@@ -125,6 +125,98 @@
 .tkd-account-details .tkd-plan {
   color: var(--tk-orange);
 }
+.tkd-meal-heading {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.tkd-meal-heading .tkd-small {
+  margin-top: 6px;
+}
+.tkd-meal-form {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding: 20px;
+  background: var(--tk-mist);
+  border-radius: 8px;
+}
+.tkd-meal-form-row {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.8fr) minmax(130px, 0.8fr) minmax(200px, 1.5fr);
+  gap: 14px;
+}
+.tkd-meal-form label {
+  display: grid;
+  gap: 7px;
+  color: var(--tk-ink);
+  font-size: 14px;
+  font-weight: 600;
+}
+.tkd-meal-form input,
+.tkd-meal-form select,
+.tkd-meal-form textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--tk-line);
+  border-radius: 5px;
+  background: var(--tk-paper);
+  color: var(--tk-ink);
+  font: inherit;
+}
+.tkd-meal-form textarea {
+  resize: vertical;
+}
+.tkd-optional {
+  color: var(--tk-muted);
+  font-weight: 400;
+}
+.tkd-meal-submit {
+  justify-self: start;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--tk-orange);
+  color: var(--tk-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tkd-meal-submit:hover:not(:disabled) {
+  background: var(--tk-orange-hover);
+}
+.tkd-meal-submit:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+.tkd-meal-empty {
+  margin-bottom: 16px !important;
+}
+.tkd-meal-list li {
+  align-items: flex-start;
+}
+.tkd-meal-info {
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+  overflow-wrap: anywhere;
+}
+.tkd-meal-tag {
+  color: var(--tk-orange);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tkd-meal-info .tkd-small {
+  white-space: pre-wrap;
+}
+.tkd-success {
+  margin: 0 0 12px !important;
+  color: var(--tk-good);
+}
 .tkd-root .tkd-empty a {
   color: var(--tk-ink);
   font-weight: 700;
@@ -173,6 +265,8 @@
 .s4 { grid-column: span 4; }
 @media (max-width: 800px) {
   .s8, .s7, .s5, .s4 { grid-column: span 12; }
+  .tkd-meal-form-row { grid-template-columns: 1fr 1fr; }
+  .tkd-meal-name { grid-column: span 2; }
 }
 .tkd-card {
   background: var(--tk-paper);
@@ -353,5 +447,12 @@
 @media (prefers-reduced-motion: reduce) {
   .tkd-root * {
     transition: none !important;
+  }
+
+  @media (max-width: 520px) {
+    .tkd-meal-form-row { grid-template-columns: 1fr; }
+    .tkd-meal-name { grid-column: auto; }
+    .tkd-meal-form { padding: 14px; }
+    .tkd-meal-list li { flex-direction: column; }
   }
 }

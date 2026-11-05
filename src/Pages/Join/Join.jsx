@@ -21,6 +21,10 @@ async function authRequest(path, options = {}) {
   return result;
 }
 
+function announceAuthChange(user) {
+  window.dispatchEvent(new CustomEvent("toka-auth-change", { detail: { user } }));
+}
+
 export default function Join() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -93,6 +97,7 @@ export default function Join() {
 
       setUser(result.user);
       setMember(result.user);
+      announceAuthChange(result.user);
       continueAfterAuth();
     } catch (err) {
       console.error("Signup failed:", err);
@@ -115,6 +120,7 @@ export default function Join() {
 
       setUser(result.user);
       setMember(result.user);
+      announceAuthChange(result.user);
       continueAfterAuth();
     } catch (err) {
       console.error("Login failed:", err);
@@ -131,6 +137,7 @@ export default function Join() {
       await authRequest("/api/auth/logout", { method: "POST" });
       setUser(null);
       setMember(null);
+      announceAuthChange(null);
       setEmail("");
       setPassword("");
       setFullName("");
