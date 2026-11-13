@@ -1,15 +1,24 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import "./Join.css";
+import API_URL from "../../api.js";
 
 async function authRequest(path, options = {}) {
-  const response = await fetch(path, {
+  if (!API_URL) {
+    throw new Error("API URL is not configured.");
+  }
+
+  const response = await fetch(`${API_URL}${path}`, {
     method: options.method || "GET",
     credentials: "include",
-    headers: options.body ? { "Content-Type": "application/json" } : undefined,
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    headers: options.body
+      ? { "Content-Type": "application/json" }
+      : undefined,
+    body: options.body
+      ? JSON.stringify(options.body)
+      : undefined,
   });
+
   const result = await response.json();
 
   if (!response.ok) {
@@ -22,7 +31,9 @@ async function authRequest(path, options = {}) {
 }
 
 function announceAuthChange(user) {
-  window.dispatchEvent(new CustomEvent("toka-auth-change", { detail: { user } }));
+  window.dispatchEvent(
+    new CustomEvent("toka-auth-change", { detail: { user } })
+  );
 }
 
 export default function Join() {
