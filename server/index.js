@@ -34,7 +34,7 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
 const app = express();
 
 app.use(cors({
-  origin: "https://tokaf.marvindappah09.workers.dev",
+  origin: "https://toka.marvindappah09.workers.dev",
   credentials: true,
 }));
 
