@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import "./Dashboard.css";
+import API_URL from "../../api.js";
 
 async function readApiResponse(response) {
   const contentType = response.headers.get("content-type") || "";
@@ -36,7 +37,7 @@ function Dashboard() {
   useEffect(() => {
     let active = true;
 
-    fetch("/api/dashboard", { credentials: "include" })
+    fetch("${API_URL}/api/dashboard", { credentials: "include" })
       .then(async (response) => ({
         response,
         result: await readApiResponse(response),
@@ -107,7 +108,7 @@ function Dashboard() {
     setMealMessage("");
 
     try {
-      const response = await fetch("/api/meals", {
+      const response = await fetch(`${API_URL}/api/meals`, {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -143,7 +144,7 @@ function Dashboard() {
     setMealMessage("");
 
     try {
-      const response = await fetch(`/api/meals/${meal.id}`, {
+      const response = await fetch(`${API_URL}/api/meals/${meal.id}`, {
         method: "DELETE",
         credentials: "include",
       });
