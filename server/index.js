@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { CLASS_SCHEDULE } from "../shared/classes.js";
 
+import cors from "cors";
+
 // ------------------------------------
 // Configuration
 // ------------------------------------
@@ -15,6 +17,7 @@ const port = Number(process.env.PORT) || 5000;
 const sessionCookieName = "toka_session";
 
 const sessionDurationMs = 7 * 24 * 60 * 60 * 1000;
+const app = express();
 
 const memberships = ["Core", "Plus"];
 
@@ -167,8 +170,8 @@ function publicUser(user) {
 function sessionCookieOptions() {
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     path: "/",
   };
 }
@@ -637,3 +640,8 @@ try {
 
   process.exit(1);
 }
+
+app.use(cors({
+  origin: "https://tokaf.marvindappah09.workers.dev",
+  credentials: true,
+}));
