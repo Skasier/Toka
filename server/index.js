@@ -5,6 +5,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { CLASS_SCHEDULE } from "../shared/classes.js";
+import cors from "cors";
 
 
 // ------------------------------------
